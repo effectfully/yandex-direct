@@ -10,7 +10,7 @@ maintainer:          example@example.com
 copyright:           2016 Author name here
 category:            Web
 build-type:          Simple
-extra-source-files:  README.md
+-- extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
@@ -18,6 +18,14 @@ library
   exposed-modules:     YandexDirect,
                        YandexDirect.Lib,
                        YandexDirect.Operation,
+                       YandexDirect.Entity.Ad,
+                       YandexDirect.Entity.AdExtension,
+                       YandexDirect.Entity.AdGroup,
+                       YandexDirect.Entity.Campaign,
+                       YandexDirect.Entity.Core,
+                       YandexDirect.Entity.Dictionary
+                       YandexDirect.Entity.Keyword,
+                       YandexDirect.Entity.SitelinksSet,
                        YandexDirect.Entity,
                        YandexDirect.Result
   build-depends:       aeson,
