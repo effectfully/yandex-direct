@@ -43,6 +43,7 @@ makePerform (DirectConfig token login host) manager smethod entity = result <$> 
 type ReceiveList a = WriterT [ExceptionNotification] ClientM [Maybe a]
 
 type AddItems = forall a. Item a => [a] -> ReceiveList Integer
+
 newtype WrapAddItems = WrapAddItems AddItems
 
 makeDirectAdd :: DirectConfig -> Manager -> WrapAddItems
