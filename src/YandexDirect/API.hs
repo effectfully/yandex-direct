@@ -43,15 +43,27 @@ makePerform (DirectConfig token login host) manager smethod entity = result <$> 
 type ReceiveList a = WriterT [ExceptionNotification] ClientM [Maybe a]
 
 type AddItems = forall a. Item a => [a] -> ReceiveList Integer
+<<<<<<< HEAD
 
 makeDirectAdd :: DirectConfig -> Manager -> AddItems
 makeDirectAdd config manager = add where
+=======
+newtype WrapAddItems = WrapAddItems AddItems
+
+makeDirectAdd :: DirectConfig -> Manager -> WrapAddItems
+makeDirectAdd config manager = WrapAddItems add where
+>>>>>>> origin/master
   perfSAdd xs = makePerform config manager SAdd $ packItems xs
   add1     xs = collapseActionResults . getAddResults <$> perfSAdd xs
   add      xs = if null xs then return [] else writerT $ add1 xs
 
+<<<<<<< HEAD
 emulateAdd :: AddItems
 emulateAdd = liftIO . mapM (\_ -> Just <$> randomIO)
+=======
+emulateAdd :: WrapAddItems
+emulateAdd = WrapAddItems $ liftIO . mapM (\_ -> Just <$> randomIO)
+>>>>>>> origin/master
 
 associateHandle :: ([ExceptionNotification] -> ClientM ())
                 -> (a -> b -> c) -> [a] -> ReceiveList b -> ClientM [c]

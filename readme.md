@@ -34,7 +34,11 @@ We use `Servant.Client` for querying the API. The main function is
 data DirectConfig = DirectConfig
   { getToken :: !Text
   , getLogin :: !(Maybe Text)
+<<<<<<< HEAD
   , getHost  :: !String
+=======
+  , getHost  :: !Text
+>>>>>>> origin/master
   }
 
 makePerform :: (FromJSON (ResultOf m a), Entity a)
@@ -44,7 +48,11 @@ makePerform (DirectConfig token login host) manager smethod entity = result <$> 
   auth  = Just $ "Bearer " `mappend` token
   lang  = Just "ru"
   oper  = Operation (evalSMethod smethod) entity
+<<<<<<< HEAD
   url   = BaseUrl Https host 443 $ "/json/v5/" ++ entityName entity
+=======
+  url   = BaseUrl Https (unpack host) 443 $ "/json/v5/" ++ entityName entity
+>>>>>>> origin/master
   run   = client proxy auth lang login oper manager url
 ```
 
