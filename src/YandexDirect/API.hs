@@ -8,6 +8,7 @@ import YandexDirect.Result
 
 import System.Random
 import Data.Proxy
+import Data.Text (unpack)
 import Control.Monad.Trans
 import Network.HTTP.Client (Manager)
 import Servant
@@ -23,9 +24,12 @@ type DirectAPI a r = Header "Authorization"   Text
 data DirectConfig = DirectConfig
   { getToken :: !Text
   , getLogin :: !(Maybe Text)
-  , getHost  :: !String
+  , getHost  :: !Text
   }
 
+-- We could prove this `FromJSON (ResultOf m a)` using ideas described in
+--   http://comonad.com/reader/2011/what-constraints-entail-part-1/
+-- but it's tedious.
 makePerform :: (FromJSON (ResultOf m a), Entity a)
             => DirectConfig -> Manager -> SMethod m -> a -> ClientM (ResultOf m a)
 makePerform (DirectConfig token login host) manager smethod entity = result <$> run where
@@ -33,22 +37,21 @@ makePerform (DirectConfig token login host) manager smethod entity = result <$> 
   auth  = Just $ "Bearer " `mappend` token
   lang  = Just "ru"
   oper  = Operation (evalSMethod smethod) entity
-  url   = BaseUrl Https host 443 $ "/json/v5/" ++ entityName entity
+  url   = BaseUrl Https (unpack host) 443 $ "/json/v5/" ++ entityName entity
   run   = client proxy auth lang login oper manager url
 
 type ReceiveList a = WriterT [ExceptionNotification] ClientM [Maybe a]
 
-type AddEntity = forall a. Item a => [a] -> ReceiveList Integer
-newtype WrapAddEntity = WrapAddEntity AddEntity
+type AddItems = forall a. Item a => [a] -> ReceiveList Integer
 
-makeDirectAdd :: DirectConfig -> Manager -> WrapAddEntity
-makeDirectAdd config manager = WrapAddEntity add where
+makeDirectAdd :: DirectConfig -> Manager -> AddItems
+makeDirectAdd config manager = add where
   perfSAdd xs = makePerform config manager SAdd $ packItems xs
   add1     xs = collapseActionResults . getAddResults <$> perfSAdd xs
   add      xs = if null xs then return [] else writerT $ add1 xs
 
-emulateAdd :: WrapAddEntity
-emulateAdd = WrapAddEntity $ liftIO . mapM (\_ -> Just <$> randomIO)
+emulateAdd :: AddItems
+emulateAdd = liftIO . mapM (\_ -> Just <$> randomIO)
 
 associateHandle :: ([ExceptionNotification] -> ClientM ())
                 -> (a -> b -> c) -> [a] -> ReceiveList b -> ClientM [c]
