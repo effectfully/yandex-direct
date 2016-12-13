@@ -59,7 +59,7 @@ data Dictionaries = Dictionaries
   } deriving (Generic)
 
 data GeoRegionsItem = GeoRegionsItem
-  { getGeoRegionId   :: Integer
+  { getGeoRegionId   :: !Integer
   , getGeoRegionName :: !Text
   , getGeoRegionType :: !Text
   , getParentId      :: !(Maybe Integer)
