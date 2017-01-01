@@ -10,7 +10,7 @@ maintainer:          example@example.com
 copyright:           2016 Author name here
 category:            Web
 build-type:          Simple
--- extra-source-files:  README.md
+extra-source-files:  README.md
 cabal-version:       >=1.10
 
 library
@@ -31,6 +31,7 @@ library
                        YandexDirect.API
   build-depends:       aeson,
                        base >= 4.7 && < 5,
+                       dlist,
                        http-client,
                        mtl,
                        random,
@@ -45,4 +46,4 @@ library
 
 source-repository head
   type:     git
-  location: https://github.com/githubuser/yandex-direct
+  location: https://github.com/effectfully/YandexDirect

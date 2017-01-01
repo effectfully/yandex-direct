@@ -8,8 +8,10 @@ import YandexDirect.Result
 
 import System.Random
 import Data.Proxy
+import Data.DList
 import Data.Text (unpack)
 import Control.Monad.Trans
+import Control.Monad.Writer
 import Network.HTTP.Client (Manager)
 import Servant
 import Servant.Client
@@ -40,7 +42,7 @@ makePerform (DirectConfig token login host) manager smethod entity = result <$> 
   url   = BaseUrl Https (unpack host) 443 $ "/json/v5/" ++ entityName entity
   run   = client proxy auth lang login oper manager url
 
-type ReceiveList a = WriterT [ExceptionNotification] ClientM [Maybe a]
+type ReceiveList a = WriterT (DList ExceptionNotification) ClientM [Maybe a]
 
 type AddItems = forall a. Item a => [a] -> ReceiveList Integer
 
@@ -49,8 +51,8 @@ newtype WrapAddItems = WrapAddItems AddItems
 makeDirectAdd :: DirectConfig -> Manager -> WrapAddItems
 makeDirectAdd config manager = WrapAddItems add where
   perfSAdd xs = makePerform config manager SAdd $ packItems xs
-  add1     xs = collapseActionResults . getAddResults <$> perfSAdd xs
-  add      xs = if null xs then return [] else writerT $ add1 xs
+  add1     xs = second fromList . collapseActionResults . getAddResults <$> perfSAdd xs
+  add      xs = if null xs then return [] else WriterT $ add1 xs
 
 emulateAdd :: WrapAddItems
 emulateAdd = WrapAddItems $ liftIO . mapM (\_ -> Just <$> randomIO)
@@ -59,5 +61,5 @@ associateHandle :: ([ExceptionNotification] -> ClientM ())
                 -> (a -> b -> c) -> [a] -> ReceiveList b -> ClientM [c]
 associateHandle handle f xs c = do
   (mys, es) <- runWriterT c
-  when (not $ null es) $ handle es
+  when (not $ null es) . handle $ toList es
   return . catMaybes $ zipWith (fmap . f) xs mys

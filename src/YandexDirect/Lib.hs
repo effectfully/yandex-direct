@@ -22,22 +22,6 @@ import TextShow.Generic
 
 import Data.Char
 import Data.String as String
-import Control.Monad.Trans.State.Strict
-
--- See https://mail.haskell.org/pipermail/libraries/2013-March/019528.html
-type WriterT = StateT
-
-writerT :: (Monad m, Monoid w) => m (a, w) -> WriterT w m a
-writerT p = StateT $ \w' -> second (`mappend` w') <$!> p
-{-# INLINE writerT #-}
-
-runWriterT :: Monoid w => WriterT w m a -> m (a, w)
-runWriterT w = runStateT w mempty
-{-# INLINE runWriterT #-}
-
-tell :: (Monad m, Monoid w) => w -> WriterT w m ()
-tell w = StateT $ \w' -> return . (,) () $! w `mappend` w'
-{-# INLINE tell #-}
 
 newtype PureText = PureText
   { getPureText :: Text
