@@ -30,7 +30,8 @@ newtype PureText = PureText
 instance IsString PureText where
   fromString = PureText . String.fromString
   {-# INLINE fromString #-}
-  
+
+-- TODO: add quotes to all three instances?
 instance TextShow PureText where
   showb (PureText t) = fromText t
   {-# INLINE showb #-}

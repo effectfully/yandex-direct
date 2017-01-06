@@ -11,7 +11,7 @@ instance Item CampaignAddItem where
   type PackItems CampaignAddItem = Campaigns
   packItems = Campaigns
 
-data Campaigns = Campaigns
+newtype Campaigns = Campaigns
   { getCampaigns :: [CampaignAddItem]
   } deriving (Generic)
 

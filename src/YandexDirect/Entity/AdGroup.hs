@@ -11,7 +11,7 @@ instance Item AdGroupAddItem where
   type PackItems AdGroupAddItem = AdGroups
   packItems = AdGroups
 
-data AdGroups = AdGroups
+newtype AdGroups = AdGroups
   { getAdGroups :: [AdGroupAddItem]
   } deriving (Generic)
 

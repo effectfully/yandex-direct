@@ -5,8 +5,8 @@ import YandexDirect.Lib
 import YandexDirect.Operation
 import YandexDirect.Entity.Dictionary
 
-data Result a = Result
-  { result :: !a
+newtype Result a = Result
+  { result :: a
   } deriving (Functor, Generic)
 
 instance ToJSON   a => ToJSON   (Result a)
@@ -16,7 +16,7 @@ type family ResultOf m a where
   ResultOf 'Add a               = AddResults
   ResultOf 'Get DictionaryNames = Dictionaries
 
-data AddResults = AddResults
+newtype AddResults = AddResults
   { getAddResults :: [ActionResult]
   } deriving (Generic)
 

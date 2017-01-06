@@ -11,7 +11,7 @@ instance Item KeywordAddItem where
   type PackItems KeywordAddItem = Keywords
   packItems = Keywords
 
-data Keywords = Keywords
+newtype Keywords = Keywords
   { getKeywords :: [KeywordAddItem]
   } deriving (Generic)
 

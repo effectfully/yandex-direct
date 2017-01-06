@@ -11,7 +11,7 @@ instance Item DictionaryNameEnum where
   type PackItems DictionaryNameEnum = DictionaryNames
   packItems = DictionaryNames
 
-data DictionaryNames = DictionaryNames
+newtype DictionaryNames = DictionaryNames
   { getDictionaryNames :: [DictionaryNameEnum]
   } deriving (Generic)
 

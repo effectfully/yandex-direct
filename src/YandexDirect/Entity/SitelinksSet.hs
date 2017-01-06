@@ -11,7 +11,7 @@ instance Item SitelinksSetAddItem where
   type PackItems SitelinksSetAddItem = SitelinksSets
   packItems = SitelinksSets
 
-data SitelinksSets = SitelinksSets
+newtype SitelinksSets = SitelinksSets
   { getSitelinksSets :: [SitelinksSetAddItem]
   } deriving (Generic)
 
